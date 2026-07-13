@@ -17,8 +17,8 @@ from pathlib import Path
 ROOT = Path(__file__).parent
 SOURCES_FILE = ROOT / "sources.yaml"
 CACHE_FILE = ROOT / "ai_daily.json"
-OUTPUT_FILE = ROOT / "index.html"  # 最新一天（快速入口）
-ARCHIVE_DIR = ROOT / "archive"  # 历史存档
+OUTPUT_FILE = ROOT / "index.html"
+ARCHIVE_DIR = ROOT / "archive"
 
 
 def load_sources():
@@ -36,6 +36,23 @@ def load_cache():
     return {}
 
 
+    # Archive to dated file
+    today_file = datetime.now().strftime("%Y-%m-%d") + ".html"
+    ARCHIVE_DIR.mkdir(exist_ok=True)
+    with open(ARCHIVE_DIR / today_file, "w", encoding="utf-8") as f:
+        f.write(html)
+    
+    # Purge archives older than 7 days
+    cutoff = datetime.now() - timedelta(days=7)
+    for old_f in ARCHIVE_DIR.glob("*.html"):
+        try:
+            fd = datetime.strptime(old_f.stem, "%Y-%m-%d")
+            if fd < cutoff:
+                old_f.unlink()
+                print(f"   Purged: {old_f.name}")
+        except ValueError:
+            pass
+    
 def save_cache(cache):
     """保存缓存（只保留最近 7 天的）"""
     cutoff = (datetime.now() - timedelta(days=7)).isoformat()
@@ -362,7 +379,7 @@ def generate_html(articles, max_total):
         </div>
         
         <div class="footer">
-            🤖 由 AI 日报系统自动生成 · 每天更新 · 数据来源见文章标注
+            🤖 由 AI 日报系统自动生成 · 每天更新 · <a href="archive/" style="color:#86868b">历史存档</a>
         </div>
     </div>
 </body>
@@ -397,24 +414,6 @@ def main():
     
     with open(OUTPUT_FILE, 'w', encoding='utf-8') as f:
         f.write(html)
-    
-    # 保存到 archive（带日期）
-    today_file = f"{datetime.now().strftime('%Y-%m-%d')}.html"
-    ARCHIVE_DIR.mkdir(exist_ok=True)
-    with open(ARCHIVE_DIR / today_file, 'w', encoding='utf-8') as f:
-        f.write(html)
-    
-    # 清理 7 天前的旧文件
-    cutoff = datetime.now() - timedelta(days=7)
-    for f in ARCHIVE_DIR.glob("*.html"):
-        try:
-            date_str = f.stem  # "2026-07-13"
-            file_date = datetime.strptime(date_str, "%Y-%m-%d")
-            if file_date < cutoff:
-                f.unlink()
-                print(f"   🗑️  清理旧档: {f.name}")
-        except ValueError:
-            pass
     
     # 保存缓存
     save_cache(cache)
