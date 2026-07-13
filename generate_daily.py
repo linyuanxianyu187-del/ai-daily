@@ -17,7 +17,8 @@ from pathlib import Path
 ROOT = Path(__file__).parent
 SOURCES_FILE = ROOT / "sources.yaml"
 CACHE_FILE = ROOT / "ai_daily.json"
-OUTPUT_FILE = ROOT / "index.html"
+OUTPUT_FILE = ROOT / "index.html"  # 最新一天（快速入口）
+ARCHIVE_DIR = ROOT / "archive"  # 历史存档
 
 
 def load_sources():
@@ -131,7 +132,7 @@ def auto_git_push():
     """Auto git add + commit + push to GitHub"""
     import subprocess
     try:
-        subprocess.run(["git", "add", "index.html"], cwd=str(ROOT),
+        subprocess.run(["git", "add", "index.html", "archive/"], cwd=str(ROOT),
                        capture_output=True, timeout=10)
         subprocess.run(["git", "commit", "-m",
                        "📰 " + datetime.now().strftime("%m-%d") + " AI日报更新"],
@@ -396,6 +397,24 @@ def main():
     
     with open(OUTPUT_FILE, 'w', encoding='utf-8') as f:
         f.write(html)
+    
+    # 保存到 archive（带日期）
+    today_file = f"{datetime.now().strftime('%Y-%m-%d')}.html"
+    ARCHIVE_DIR.mkdir(exist_ok=True)
+    with open(ARCHIVE_DIR / today_file, 'w', encoding='utf-8') as f:
+        f.write(html)
+    
+    # 清理 7 天前的旧文件
+    cutoff = datetime.now() - timedelta(days=7)
+    for f in ARCHIVE_DIR.glob("*.html"):
+        try:
+            date_str = f.stem  # "2026-07-13"
+            file_date = datetime.strptime(date_str, "%Y-%m-%d")
+            if file_date < cutoff:
+                f.unlink()
+                print(f"   🗑️  清理旧档: {f.name}")
+        except ValueError:
+            pass
     
     # 保存缓存
     save_cache(cache)
