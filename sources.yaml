@@ -1,18 +1,17 @@
 # AI 日报 RSS 订阅源
-# 每天自动收集这些网站的最新文章
+# 每天自动收集 | 5 个稳定源
 
 sources:
-  # ── ✅ 可用 ──
   - name: "OpenAI Blog"
     url: "https://openai.com/blog/rss.xml"
     region: "🇺🇸"
     
-  - name: "MIT Tech Review AI"
+  - name: "MIT Tech Review"
     url: "https://www.technologyreview.com/feed/"
     region: "🇺🇸"
 
-  - name: "The Verge AI"
-    url: "https://www.theverge.com/rss/ai-artificial-intelligence/index.xml"
+  - name: "TechCrunch AI"
+    url: "https://techcrunch.com/category/artificial-intelligence/feed/"
     region: "🇺🇸"
 
   - name: "量子位"
@@ -23,20 +22,5 @@ sources:
     url: "https://sspai.com/feed"
     region: "🇨🇳"
 
-  # ── ⚠️ 被墙/暂不可用 ──
-  # - name: "Google DeepMind"
-  #   url: "https://deepmind.google/blog/feed.xml"
-  #   region: "🇺🇸"
-  #
-  # - name: "Meta AI"
-  #   url: "https://ai.meta.com/blog/feed/"
-  #   region: "🇺🇸"
-  #
-  # - name: "Hugging Face Blog"
-  #   url: "https://huggingface.co/blog/feed.xml"
-  #   region: "🇺🇸"
-
-# 每天最多显示的文章数（每个源最多取 3 条）
 max_per_source: 3
-# 总共最多显示的文章数
 max_total: 25

@@ -120,7 +120,7 @@ def auto_git_push():
         subprocess.run(["git", "add", "index.html"], cwd=str(ROOT),
                        capture_output=True, timeout=10)
         subprocess.run(["git", "commit", "-m",
-                       f"📰 {datetime.now().strftime("%m-%d")} AI日报更新"],
+                       "📰 " + datetime.now().strftime("%m-%d") + " AI日报更新"],
                        cwd=str(ROOT), capture_output=True, timeout=10)
         result = subprocess.run(["git", "push"], cwd=str(ROOT),
                                 capture_output=True, timeout=30)
