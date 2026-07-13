@@ -83,7 +83,7 @@ def fetch_articles(sources, max_per_source, cache):
                     'source_name': name,
                     'source_region': region,
                     'published': published,
-                    'summary': clean_summary(entry.get('summary', entry.get('description', ''))),
+                    'summary': extract_content(entry),
                     'collected_date': today,
                 })
                 
@@ -99,6 +99,20 @@ def fetch_articles(sources, max_per_source, cache):
     return articles
 
 
+def extract_content(entry):
+    """Extract the best available content from a feed entry"""
+    # Try to get full content first
+    content_list = entry.get('content', [])
+    if content_list:
+        full = content_list[0].get('value', '')
+        if len(full) > 100:
+            return clean_summary(full)
+    
+    # Fall back to summary/description
+    summary = entry.get('summary', entry.get('description', ''))
+    return clean_summary(summary)
+
+
 def clean_summary(text):
     """清洗摘要：去 HTML 标签，截断"""
     import re
@@ -107,8 +121,8 @@ def clean_summary(text):
     # 去多余空白
     text = re.sub(r'\s+', ' ', text).strip()
     # 截断到 200 字
-    if len(text) > 200:
-        text = text[:200] + '...'
+    if len(text) > 400:
+        text = text[:400] + '...'
     return text
 
 
