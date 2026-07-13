@@ -9,6 +9,7 @@ import yaml
 import json
 import os
 import sys
+import subprocess
 from datetime import datetime, timedelta
 from pathlib import Path
 
@@ -109,6 +110,26 @@ def clean_summary(text):
     if len(text) > 200:
         text = text[:200] + '...'
     return text
+
+
+
+def auto_git_push():
+    """Auto git add + commit + push to GitHub"""
+    import subprocess
+    try:
+        subprocess.run(["git", "add", "index.html"], cwd=str(ROOT),
+                       capture_output=True, timeout=10)
+        subprocess.run(["git", "commit", "-m",
+                       f"📰 {datetime.now().strftime("%m-%d")} AI日报更新"],
+                       cwd=str(ROOT), capture_output=True, timeout=10)
+        result = subprocess.run(["git", "push"], cwd=str(ROOT),
+                                capture_output=True, timeout=30)
+        if result.returncode == 0:
+            print("   📤 已推送到 GitHub")
+        else:
+            print(f"   ⚠️ 推送失败: {result.stderr.decode()[:100]}")
+    except Exception as e:
+        print(f"   ⚠️ Git推送跳过: {e}")
 
 
 def format_date(date_str):
@@ -369,6 +390,9 @@ def main():
     print(f"   新文章: {len(articles)} 条")
     print(f"   日报位置: {OUTPUT_FILE}")
     print(f"   浏览器打开: file:///{OUTPUT_FILE.as_posix()}")
+    
+    # Auto push to GitHub
+    auto_git_push()
 
 
 if __name__ == '__main__':
