@@ -1,0 +1,51 @@
+# AI 日报 RSS 订阅源
+# 每天自动收集这些网站的最新文章
+
+sources:
+  # ── 国外 AI 大厂 ──
+  - name: "OpenAI Blog"
+    url: "https://openai.com/blog/rss.xml"
+    region: "🇺🇸"
+    
+  - name: "Google DeepMind"
+    url: "https://deepmind.google/blog/feed.xml"
+    region: "🇺🇸"
+    
+  - name: "Anthropic Blog"
+    url: "https://www.anthropic.com/feed.xml"
+    region: "🇺🇸"
+
+  - name: "Meta AI"
+    url: "https://ai.meta.com/blog/feed/"
+    region: "🇺🇸"
+
+  # ── 国外 AI 社区/媒体 ──
+  - name: "Hugging Face Blog"
+    url: "https://huggingface.co/blog/feed.xml"
+    region: "🇺🇸"
+
+  - name: "MIT Tech Review AI"
+    url: "https://www.technologyreview.com/feed/"
+    region: "🇺🇸"
+
+  - name: "The Verge AI"
+    url: "https://www.theverge.com/ai-artificial-intelligence/rss/index.xml"
+    region: "🇺🇸"
+
+  # ── 国内 AI 媒体 ──
+  - name: "机器之心"
+    url: "https://www.jiqizhixin.com/rss"
+    region: "🇨🇳"
+
+  - name: "量子位"
+    url: "https://www.qbitai.com/feed"
+    region: "🇨🇳"
+
+  - name: "少数派"
+    url: "https://sspai.com/feed"
+    region: "🇨🇳"
+
+# 每天最多显示的文章数（每个源最多取 3 条）
+max_per_source: 3
+# 总共最多显示的文章数
+max_total: 25
