@@ -18,7 +18,6 @@ ROOT = Path(__file__).parent
 SOURCES_FILE = ROOT / "sources.yaml"
 CACHE_FILE = ROOT / "ai_daily.json"
 OUTPUT_FILE = ROOT / "index.html"
-ARCHIVE_DIR = ROOT / "archive"
 
 
 def load_sources():
@@ -36,23 +35,6 @@ def load_cache():
     return {}
 
 
-    # Archive to dated file
-    today_file = datetime.now().strftime("%Y-%m-%d") + ".html"
-    ARCHIVE_DIR.mkdir(exist_ok=True)
-    with open(ARCHIVE_DIR / today_file, "w", encoding="utf-8") as f:
-        f.write(html)
-    
-    # Purge archives older than 7 days
-    cutoff = datetime.now() - timedelta(days=7)
-    for old_f in ARCHIVE_DIR.glob("*.html"):
-        try:
-            fd = datetime.strptime(old_f.stem, "%Y-%m-%d")
-            if fd < cutoff:
-                old_f.unlink()
-                print(f"   Purged: {old_f.name}")
-        except ValueError:
-            pass
-    
 def save_cache(cache):
     """保存缓存（只保留最近 7 天的）"""
     cutoff = (datetime.now() - timedelta(days=7)).isoformat()
@@ -149,7 +131,7 @@ def auto_git_push():
     """Auto git add + commit + push to GitHub"""
     import subprocess
     try:
-        subprocess.run(["git", "add", "index.html", "archive/"], cwd=str(ROOT),
+        subprocess.run(["git", "add", "index.html"], cwd=str(ROOT),
                        capture_output=True, timeout=10)
         subprocess.run(["git", "commit", "-m",
                        "📰 " + datetime.now().strftime("%m-%d") + " AI日报更新"],
@@ -379,7 +361,7 @@ def generate_html(articles, max_total):
         </div>
         
         <div class="footer">
-            🤖 由 AI 日报系统自动生成 · 每天更新 · <a href="archive/" style="color:#86868b">历史存档</a>
+            🤖 由 AI 日报系统自动生成 · 每天更新 · 数据来源见文章标注
         </div>
     </div>
 </body>
